@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BERT相關論文講讀｜日語語義研究</title>
+<style>
+:root{--ink:#263238;--muted:#65747b;--line:#dce5e8;--accent:#176b68;--soft:#edf6f4;--paper:#fff;--bg:#f4f7f7;--gold:#8d5e12;--goldbg:#fff7e5}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.82 system-ui,-apple-system,"Segoe UI","Noto Sans TC","Microsoft JhengHei",sans-serif}
+main{max-width:980px;margin:0 auto;padding:34px 22px 72px}.eyebrow{color:var(--accent);font-size:.88rem;letter-spacing:.08em;font-weight:700}h1{font-size:2.1rem;line-height:1.35;margin:.25rem 0 1.15rem}h2{font-size:1.55rem;margin:2.8rem 0 1rem;padding-bottom:.4rem;border-bottom:2px solid var(--line)}h3{font-size:1.15rem;margin:1.8rem 0 .35rem;color:#174f4e}h4{font-size:1rem;margin:1.1rem 0 .25rem}.meta{color:var(--muted);font-size:.93rem}.lead,.panel{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin:18px 0}.lead{border-left:5px solid var(--accent);font-size:1.04rem}.panel.point{background:var(--soft);border-color:#cde2dd}.panel.note{background:var(--goldbg);border-color:#ead9b3}.label{font-size:.82rem;font-weight:750;color:var(--accent);letter-spacing:.04em}.note .label{color:var(--gold)}nav{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin:22px 0}nav ol{margin:.3rem 0;padding-left:1.5rem}a{color:#126c77;text-decoration-thickness:1px;text-underline-offset:3px}a:hover{color:#0a484e}blockquote{margin:12px 0;padding:10px 16px;border-left:3px solid #9dbeb9;background:#f7fbfa;color:#35494b}blockquote p{margin:.2rem 0}table{border-collapse:collapse;width:100%;margin:14px 0;background:#fff;font-size:.95rem}th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}th{background:#edf3f3;color:#24494a}ul,ol{padding-left:1.45rem}li{margin:.25rem 0}.paper{padding-top:4px}.paperhead{display:flex;gap:12px;align-items:flex-start}.num{flex:0 0 34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800}.paperhead h2{margin:0 0 6px;border:0;padding:0}.paperhead p{margin:0;color:var(--muted)}.source{font-size:.9rem;color:var(--muted)}.tag{display:inline-block;border-radius:999px;padding:2px 10px;background:#edf3f3;color:#40575c;font-size:.82rem;margin:2px 4px 2px 0}.flow{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.flow article{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px}.flow b{color:var(--accent)}.glossary dt{font-weight:750;color:#174f4e;margin-top:1rem}.glossary dd{margin:0 0 .3rem}.foot{border-top:1px solid var(--line);margin-top:38px;padding-top:18px;color:var(--muted);font-size:.9rem}
+.diagram{margin:18px 0 24px;padding:14px;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}.diagram figcaption{font-size:.9rem;color:var(--muted);margin:8px 4px 0}.diagram svg{display:block;width:100%;height:auto}.diagram .box{fill:#f5faf9;stroke:#8db7b0;stroke-width:2}.diagram .box2{fill:#fff7e5;stroke:#d6b66f;stroke-width:2}.diagram .arrow{stroke:#557c7c;stroke-width:2.5;fill:none;marker-end:url(#arrow)}.diagram text{font-family:system-ui,-apple-system,"Segoe UI","Noto Sans TC","Microsoft JhengHei",sans-serif;fill:#263238}.diagram .small{font-size:14px;fill:#58686c}.diagram .title{font-size:17px;font-weight:700}.diagram .labeltext{font-size:15px;font-weight:650}
+@media(max-width:650px){main{padding:24px 15px 50px}h1{font-size:1.7rem}.flow{grid-template-columns:1fr}table{font-size:.88rem}th,td{padding:8px}.diagram{padding:8px}.diagram .small{font-size:16px}.diagram .title{font-size:18px}}
+</style>
+</head>
+<body><main>
+<div class="eyebrow">論文講讀 ／ BERT 與日語語義研究</div>
+<h1>BERT 相關論文：語義變化、詞義表徵與語義消歧</h1>
+<p class="meta">中文讀書講義｜依原論文順序整理｜頁碼以各 PDF 頁碼為主；必要時補充論文印刷頁碼</p>
+
+<section class="lead"><strong>先掌握共同問題：</strong>上下文會改變詞語的用法，BERT 能為詞語產生依語境而變化的向量表示。這三篇研究分別追問：這些向量能否追蹤詞義隨時間的變化？向量分散程度能否表示多義程度？WordNet 關係能否補充無監督語義消歧所缺少的語義線索？</section>
+
+<div class="flow"><article><b>研究一｜追蹤變化</b><br>把不同時期的詞語用例分組，觀察各組比例如何變化。</article><article><b>研究二｜檢驗表示</b><br>檢查多義詞的 BERT 向量是否比單義詞更分散。</article><article><b>研究三｜補入知識</b><br>測試 WordNet 上位詞、下位詞關係是否有助於無監督 WSD。</article></div>
+
+<figure class="diagram" aria-labelledby="overview-caption"><svg viewBox="0 0 900 145" role="img" aria-label="三篇研究從表示、測量到消歧的問題脈絡"><defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#557c7c"/></marker></defs><rect class="box" x="18" y="32" rx="12" width="205" height="78"/><text class="title" x="120" y="62" text-anchor="middle">BERT 表徵</text><text class="small" x="120" y="88" text-anchor="middle">詞向量依上下文改變</text><path class="arrow" d="M228 71 H290"/><rect class="box" x="300" y="32" rx="12" width="245" height="78"/><text class="title" x="422" y="62" text-anchor="middle">語義分析的三個切面</text><text class="small" x="422" y="88" text-anchor="middle">追蹤變化｜測量廣度｜判斷詞義</text><path class="arrow" d="M550 71 H612"/><rect class="box2" x="622" y="32" rx="12" width="260" height="78"/><text class="title" x="752" y="62" text-anchor="middle">需要外部驗證</text><text class="small" x="752" y="88" text-anchor="middle">詞典、語料、標註或知識關係</text></svg><figcaption id="overview-caption">圖 0｜三篇論文的問題脈絡。這是講義整理的概念圖，不是論文中的原圖或實驗結果。</figcaption></figure>
+<nav><strong>目次</strong><ol>
+<li><a href="#paper1">BERT を用いた日本語の意味変化の分析</a></li>
+<li><a href="#paper2">BERT による単語埋め込み表現の分散値を用いた語義の広がりの分析</a></li>
+<li><a href="#paper3">教師なし学習による語義曖昧性解消の素性検討</a></li>
+<li><a href="#compare">三篇研究的對照與整體理解</a></li>
+<li><a href="#terms">術語小辭典</a></li>
+</ol></nav>
+
+<section class="paper" id="paper1">
+<div class="paperhead"><div class="num">1</div><div><h2>BERT を用いた日本語の意味変化の分析</h2><p>小林千真、相田太一、岡照晃、小町守｜《自然言語処理》30(2)，2023</p></div></div>
+<p class="source">閱讀範圍：摘要 PDF 第 1–2 頁；研究方法與實驗 PDF 第 7–15 頁；分析、限制與結論 PDF 第 16–30 頁。論文印刷頁碼約 pp. 716–734。</p>
+<blockquote><p><strong>原文要點（摘要，PDF 第 1 頁）：</strong>「辞書を使った教師ありのグルーピング手法とクラスタリングを使った教師なしのグルーピング手法を適用し比較した」</p><p>作者比較詞典監督式分組與聚類非監督式分組，並把現代日語 BERT 用歷時語料微調。</p></blockquote>
+
+<h3>1. 研究主題與目的</h3><p>研究主題是以 BERT 分析日語詞語的歷時語義變化。詞義和用法會隨年代改變，例如「渋滞」早期可表示事情停滯，後來常指交通堵塞。作者希望確認既有的上下文詞向量分組方法能否用於日語，以及兩種分組方法各自在什麼情況下有效。摘要與論文第 1 節，PDF 第 1–3 頁。</p>
+
+<h3>2. 研究問題</h3><div class="panel note"><span class="label">整理者歸納｜作者未以問題清單列出</span><ol><li>詞典式分組和 k-means 聚類，哪一種較能辨認不同年代間的日語語義變化？</li><li>把現代 BERT 用歷時語料微調，是否能改善模型對舊時期詞語用法的表徵？</li><li>詞典品質、語料年代分布與詞義頻率，會如何影響分析結果？</li></ol></div>
+
+<h3>3. 研究方法</h3><figure class="diagram" aria-labelledby="dia1-caption"><svg viewBox="0 0 920 255" role="img" aria-label="歷時語義變化分析流程"><defs><marker id="arrow1" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#557c7c"/></marker></defs><rect class="box" x="10" y="80" rx="12" width="160" height="76"/><text class="title" x="90" y="110" text-anchor="middle">歷時語料</text><text class="small" x="90" y="135" text-anchor="middle">句子＋年代</text><path d="M173 118 H225" stroke="#557c7c" stroke-width="2.5" marker-end="url(#arrow1)"/><rect class="box" x="235" y="80" rx="12" width="170" height="76"/><text class="title" x="320" y="110" text-anchor="middle">BERT 向量</text><text class="small" x="320" y="135" text-anchor="middle">每個用例一個表示</text><path d="M408 118 H450" stroke="#557c7c" stroke-width="2.5" marker-end="url(#arrow1)"/><rect class="box" x="460" y="27" rx="12" width="190" height="68"/><text class="labeltext" x="555" y="55" text-anchor="middle">詞典分組</text><text class="small" x="555" y="77" text-anchor="middle">對照詞典例句</text><rect class="box" x="460" y="139" rx="12" width="190" height="68"/><text class="labeltext" x="555" y="167" text-anchor="middle">k-means 聚類</text><text class="small" x="555" y="189" text-anchor="middle">依向量分群</text><path d="M653 61 C690 61 682 99 715 109 M653 173 C690 173 682 137 715 127" stroke="#557c7c" stroke-width="2.5" fill="none" marker-end="url(#arrow1)"/><rect class="box" x="720" y="80" rx="12" width="185" height="76"/><text class="title" x="812" y="108" text-anchor="middle">年代比例變化</text><text class="small" x="812" y="132" text-anchor="middle">JSD＋例句核查</text><text class="small" x="460" y="237">分組只是中間步驟，仍需確認群集是否對應詞義。</text></svg><figcaption id="dia1-caption">圖 1｜歷時語義分析流程（依論文方法改繪）。JSD 量度比例變動；人工核查協助判斷群集意義。</figcaption></figure><ul><li><strong>語料與年代：</strong>使用日本語歷史語料及近現代雜誌資料，分析 1898–1997 年，分為四個 25 年時段；統一新舊字體等表記差異，同時保留活用差異。PDF 第 11–12 頁。</li><li><strong>目標詞：</strong>從既有近現代日語語義變化詞表選出 34 個各時期都有足夠出現次數的詞。另抽取未被列為語義變化的詞作比較。PDF 第 13–14 頁。</li><li><strong>詞向量：</strong>將包含目標詞的句子輸入 BERT，擷取目標詞對應 token 最後一層隱藏向量；若詞拆成多個 token，取其向量平均。PDF 第 7 頁。</li><li><strong>分組方法：</strong>詞典法以《日本國語大辭典》的語義例句建立語義向量，將語料例句分配給最近的語義向量；聚類法對詞向量做 k-means，測試不同群數並選擇輪廓分數最高的結果。PDF 第 8–10 頁。</li><li><strong>語義變化評估：</strong>計算每一時段各語義／群集的用例比例，並以相鄰時段的 JSD 量化比例變化；另由研究者抽查群集例句，判斷它們是否對應原義或轉義。PDF 第 10、13–14 頁。</li><li><strong>模型比較：</strong>比較現代語 BERT 與以歷時語料繼續預訓練（論文稱 fine-tuning）的近代語 BERT。PDF 第 12 頁。</li></ul>
+
+<h3>4. 研究結果與結論</h3><table><thead><tr><th>條件</th><th>研究發現</th><th>如何理解</th></tr></thead><tbody><tr><td>詞典法能使用時</td><td>可有效捕捉部分詞的變化；限縮到可適用詞彙後，其表現可與聚類法相當或更好。</td><td>詞典語義與例句若能覆蓋目標用法，明確語義錨點很有幫助。</td></tr><tr><td>詞典覆蓋不足或不能使用時</td><td>聚類法整體較有優勢，也可能發現詞典未列出的用法差別。</td><td>聚類不要求先備齊全詞義清單，但群集仍需人工解讀。</td></tr><tr><td>歷時語料微調</td><td>有助於捕捉舊時期特有的詞語形式與表達。</td><td>模型接觸歷史語料後，對舊文本的適應較好。</td></tr><tr><td>現代新用法</td><td>某些只在新時期出現的用法，未必能由只含早期例子的資料有效捕捉。</td><td>語料涵蓋與時間方向會限制可辨識的變化。</td></tr></tbody></table><p>以上為作者摘要與第 5–7 節的整體結論，PDF 第 1–2、15–30 頁。</p>
+
+<h3>5. 研究限制</h3><ul><li>詞典法受制於詞典是否收錄該詞義、是否有足夠且合適的例句；若缺少例句便無法建立可靠的語義向量。PDF 第 14–15 頁。</li><li>k-means 可能不適合詞義頻率非常不均的情況，群集也未必剛好對應語義。PDF 第 15 頁及第 7 節。</li><li>主要分析使用一個日語 BERT 模型，作者明確指出其他模型不保證會得到相同結果。PDF 第 12 頁註 17。</li><li>JSD 只反映群集比例變化；即使分數高，也不能單獨證明群集代表了真正的詞義變化。PDF 第 10–11 頁。</li><li>定性判斷主要由第一作者進行，只有部分難以判斷的詞由多位作者共同檢視。PDF 第 13–14 頁。</li></ul>
+
+<h3>6. 未來研究建議</h3><p>作者明確指出，未來需進一步調查 BERT 詞向量的特性及其對語義的表徵能力。PDF 第 24、30 頁。從本文限制延伸，後續研究也可比較多種預訓練模型、測試更能處理不平衡群集的方法、增加詞典例句覆蓋，並以多人標註檢查人工判讀的一致性。後述為整理者建議。</p>
+
+<div class="panel point"><span class="label">ポイント</span><br>這篇不是只問「BERT 能不能看出詞義變化」，而是把變化分析拆成兩步：先把用例分組，再比較各組跨年代的比例。分組品質與比例變化的解讀都會影響結論。</div>
+</section>
+
+<section class="paper" id="paper2">
+<div class="paperhead"><div class="num">2</div><div><h2>BERT による単語埋め込み表現の分散値を用いた語義の広がりの分析</h2><p>歐陽恵子、曹鋭、白静、馬ブン、新納浩幸｜語言資源活用工作坊 2020</p></div></div>
+<p class="source">閱讀範圍：論文 PDF 第 2–8 頁；論文集印刷頁碼 pp. 174–180。</p>
+<blockquote><p><strong>原文要點（摘要，PDF 第 2 頁）：</strong>「上記の分散値では語義の広がりを測定するのは困難」</p><p>作者測試多義詞和單義詞的 BERT 向量分散是否不同，結果發現單靠該分散值難以測量詞義廣度。</p></blockquote>
+
+<h3>1. 研究主題與目的</h3><p>研究 BERT 產生的詞向量分散值，能不能當作詞義多寡或語義廣度的指標。作者的直覺假設是：多義詞用在不同語境時，向量應較分散；單義詞的向量應較集中。研究也檢查 BERT 不同層的向量分散是否呈現變化。PDF 第 2–4 頁。</p>
+
+<h3>2. 研究問題</h3><div class="panel note"><span class="label">整理者歸納｜作者未列正式問題</span><ol><li>多義詞的 BERT 詞向量分散值，是否顯著大於單義詞？</li><li>BERT 的哪些層級，較能呈現詞義差異或語義廣度？</li></ol></div>
+
+<h3>3. 研究方法</h3><figure class="diagram" aria-labelledby="dia2-caption"><svg viewBox="0 0 900 300" role="img" aria-label="詞向量分散示意，多義詞不同語義可能形成群集，單義詞也可能因語境而有變異"><text class="title" x="225" y="30" text-anchor="middle">理想化假設</text><text class="title" x="675" y="30" text-anchor="middle">實際會遇到的困難</text><rect class="box" x="20" y="48" rx="12" width="410" height="225"/><rect class="box2" x="470" y="48" rx="12" width="410" height="225"/><text class="labeltext" x="225" y="75" text-anchor="middle">多義詞：兩個語義群</text><circle cx="160" cy="148" r="45" fill="#dcefea" stroke="#4d9187"/><circle cx="287" cy="148" r="45" fill="#fff0d0" stroke="#c38d2d"/><g fill="#39867e"><circle cx="145" cy="139" r="5"/><circle cx="172" cy="154" r="5"/><circle cx="158" cy="166" r="5"/><circle cx="177" cy="130" r="5"/></g><g fill="#d49a35"><circle cx="273" cy="138" r="5"/><circle cx="300" cy="151" r="5"/><circle cx="283" cy="166" r="5"/><circle cx="309" cy="132" r="5"/></g><text class="small" x="225" y="229" text-anchor="middle">若語義群距離明顯，整體分散或會較大</text><text class="labeltext" x="675" y="75" text-anchor="middle">單一詞義也會受語境影響</text><ellipse cx="675" cy="151" rx="145" ry="58" fill="#edf3f3" stroke="#8c9a9d" stroke-dasharray="6 5"/><g fill="#39867e"><circle cx="587" cy="139" r="5"/><circle cx="620" cy="164" r="5"/><circle cx="653" cy="129" r="5"/><circle cx="680" cy="153" r="5"/><circle cx="705" cy="177" r="5"/><circle cx="739" cy="137" r="5"/><circle cx="771" cy="160" r="5"/><circle cx="661" cy="184" r="5"/><circle cx="720" cy="126" r="5"/></g><text class="small" x="675" y="229" text-anchor="middle">句法、主題、搭配也能造成向量散布</text></svg><figcaption id="dia2-caption">圖 2｜「分散值不等於多義程度」的概念示意。左側是假設成立時的理想情況；右側說明單一語義也可能因上下文不同而有分散。圖中點位為示意，非論文數據。</figcaption></figure><ul><li><strong>目標詞：</strong>多義詞六個：「頭」「意味」「核」「記録」「言葉」「胸」；單義詞五個：「生産」「政治」「意識」「抗議」「成績」。PDF 第 3–4 頁。</li><li><strong>例句來源：</strong>BCCWJ 與《每日新聞》1993–1998 年文本，隨機抽取各詞用例。PDF 第 4 頁。</li><li><strong>分散值：</strong>把包含目標詞的句子輸入 BERT，收集目標詞向量，計算各向量到平均向量的平均平方距離；再逐層計算 12 層的分散值。PDF 第 4 頁。</li><li><strong>比較：</strong>比較多義詞與單義詞的分散值，並檢視不同層級的變化。PDF 第 4–5 頁。</li></ul>
+
+<h3>4. 研究結果與結論</h3><table><thead><tr><th>比較項目</th><th>結果</th><th>作者解讀</th></tr></thead><tbody><tr><td>多義詞平均分散值</td><td>186.14</td><td rowspan="2">兩組差異未達統計顯著，因此不支持「只看整體分散值即可量出多義程度」的假設。</td></tr><tr><td>單義詞平均分散值</td><td>176.43</td></tr><tr><td>BERT 各層</td><td>多義詞與單義詞沒有清楚分離；分散變化也不是隨層數單調增加。</td><td>層級分散不能直接定位為詞義形成的階段。</td></tr></tbody></table><p>數值與結論見 PDF 第 4–8 頁。</p>
+
+<h3>5. 研究限制</h3><ul><li>目標詞只有 11 個，且多義／單義的分類與實際例句中的詞義分布，未充分逐例核實。PDF 第 4、7 頁。</li><li>單一分散值會把不同語義群集的形狀、大小、相互距離壓成一個數字；多義詞的語義群集未必彼此相距很遠。作者於 PDF 第 7 頁討論。</li><li>單義詞也可能因語境、句法功能或搭配差異而產生分散向量，因此「單義」不必然等於向量集中。作者於 PDF 第 7 頁討論。</li><li>作者指出，未微調的 BERT 輸出是否直接表達詞義，仍未確認。PDF 第 7 頁。</li></ul>
+
+<h3>6. 未來研究建議</h3><p>作者建議依上述可能原因，繼續調查 BERT 向量與詞義的關係，但未提出具體的後續實驗方案。PDF 第 7–8 頁。整理者建議：逐例人工標註詞義、增加目標詞與例句，並比較聚類分離度、類內距離或語義分類準確率等指標，避免把所有結構簡化成單一總分。</p>
+
+<div class="panel point"><span class="label">ポイント</span><br>向量分散只告訴我們「表示有多分開」，不會自動說明「為何分開」。差異可能來自詞義，也可能來自句法、主題或語料組成，故須有詞義標註或其他驗證方式。</div>
+</section>
+
+<section class="paper" id="paper3">
+<div class="paperhead"><div class="num">3</div><div><h2>教師なし学習による語義曖昧性解消の素性検討</h2><p>田渕知明、大沢英一｜第 36 回日本人工知能學會全國大會，2022</p></div></div>
+<p class="source">閱讀範圍：論文 PDF 第 1–4 頁。</p>
+<blockquote><p><strong>原文要點（摘要，PDF 第 1 頁）：</strong>研究聚焦於 WordNet 所定義的「hypernyms」與「hyponyms」，結果顯示這些關係「may be useful features for some words」。</p><p>也就是說，上位詞、下位詞可能對部分詞提供有用線索，但不是對所有詞都有效。</p></blockquote>
+
+<h3>1. 研究主題與目的</h3><p>研究主題是無監督式詞義消歧（WSD）的特徵選擇。監督式 WSD 需大量人工標註；無監督方法雖能減少標註成本，卻欠缺明確語義訊號。作者因此檢查日本語 WordNet 的上位詞與下位詞關係，是否能補充語義線索。BERT 用於產生依上下文而變化的詞向量。PDF 第 1–2 頁。</p>
+
+<h3>2. 研究問題</h3><div class="panel note"><span class="label">整理者歸納｜作者未列正式問題</span><p>目標詞與其 WordNet 上位詞／下位詞的 BERT 表徵相似度，能否協助無監督方法辨識句中詞語所屬的語義話題？哪些詞會受益，哪些詞不會？</p></div>
+
+<h3>3. 研究方法</h3><figure class="diagram" aria-labelledby="dia3-caption"><svg viewBox="0 0 920 270" role="img" aria-label="無監督詞義消歧方法流程，結合目標詞和WordNet上下位詞表徵進行相似度比較"><defs><marker id="arrow3" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#557c7c"/></marker></defs><rect class="box" x="18" y="92" rx="12" width="175" height="78"/><text class="title" x="105" y="122" text-anchor="middle">含多義詞的句子</text><text class="small" x="105" y="147" text-anchor="middle">例如「ドライバー」</text><path d="M196 131 H250" stroke="#557c7c" stroke-width="2.5" marker-end="url(#arrow3)"/><rect class="box" x="260" y="92" rx="12" width="175" height="78"/><text class="title" x="347" y="122" text-anchor="middle">BERT 表徵</text><text class="small" x="347" y="147" text-anchor="middle">目標詞＋上下文</text><path d="M438 131 H490" stroke="#557c7c" stroke-width="2.5" marker-end="url(#arrow3)"/><rect class="box" x="500" y="30" rx="12" width="185" height="68"/><text class="labeltext" x="592" y="58" text-anchor="middle">WordNet 上位詞</text><text class="small" x="592" y="80" text-anchor="middle">或其定義句向量</text><rect class="box" x="500" y="164" rx="12" width="185" height="68"/><text class="labeltext" x="592" y="192" text-anchor="middle">WordNet 下位詞</text><text class="small" x="592" y="214" text-anchor="middle">或其定義句向量</text><path d="M438 131 C465 131 470 66 495 66 M438 131 C465 131 470 198 495 198" stroke="#557c7c" stroke-width="2.5" fill="none" marker-end="url(#arrow3)"/><path d="M688 66 C715 66 710 110 738 119 M688 198 C715 198 710 154 738 143" stroke="#557c7c" stroke-width="2.5" fill="none" marker-end="url(#arrow3)"/><rect class="box2" x="748" y="92" rx="12" width="160" height="78"/><text class="title" x="828" y="121" text-anchor="middle">相似度／話題</text><text class="small" x="828" y="146" text-anchor="middle">看線索是否集中</text><text class="small" x="500" y="255">集中於特定話題可能有用；遍布各話題時區辨力弱。</text></svg><figcaption id="dia3-caption">圖 3｜WordNet 關係作為無監督 WSD 線索的流程（依論文第 2–4 頁改繪）。研究檢查特徵分布，並未證明它對所有詞都能提升正確率。</figcaption></figure><ul><li><strong>資料：</strong>使用以話題作為語義標籤的評估資料；原始資源含 50 個詞、288 個話題，研究實際以 41 個普通名詞進行分析。PDF 第 2 頁。</li><li><strong>模型：</strong>使用京都大學公開的日語 BERT，取得目標詞及 WordNet 關係詞的向量。PDF 第 1–2 頁。</li><li><strong>相似度：</strong>比較目標詞與上位詞／下位詞的 cosine similarity，找出最相似的關係詞，並按資料集話題計數。WordNet 上位詞有英文標籤時，作者以定義句輸入 BERT 作為表徵。PDF 第 2 頁。</li><li><strong>判讀：</strong>觀察關係詞是否集中於某個話題；若一個關係詞在多個話題都同樣常見，便較難作為消歧特徵。PDF 第 3–4 頁。</li></ul>
+
+<h3>4. 研究結果與結論</h3><p>結果大致分三類：有些詞的特定上位詞／下位詞集中於特定話題，可能有助辨義；有些關係詞在所有話題都常見，區辨力有限；另有些目標詞只有一個或沒有可用的下位詞，能提供的訊息不足。作者的結論是，WordNet 關係可能對部分詞有用，但尚不足以證明它普遍提升 WSD 準確率。PDF 第 3–4 頁。</p>
+
+<h3>5. 研究限制</h3><ul><li>只分析 41 個普通名詞，詞彙範圍有限，難以判斷哪些詞類或詞義結構最適用。PDF 第 4 頁。</li><li>此研究主要檢視相似度與話題分布，沒有提供全面的 WSD 正確率提升評估。PDF 第 2–4 頁。</li><li>結果可能依 BERT 模型而變；作者明確提出需使用其他預訓練模型驗證。PDF 第 4 頁。</li><li>日本語 WordNet 的語義關係部分承襲英語資源，未必完全符合日語的詞彙組織方式。PDF 第 3–4 頁。</li><li>資料集話題標籤較粗，可能與細粒度詞典詞義消歧不完全相同。這是依 PDF 第 2 頁對標籤粒度的說明所作的分析性限制。</li></ul>
+
+<h3>6. 未來研究建議</h3><p>作者明確建議擴大目標詞數、比較其他預訓練模型，並繼續檢查 WordNet 關係的適用性。PDF 第 4 頁。後續也可加入正式的 WSD 評估指標、人工標註測試集，並與只使用上下文向量的基線方法比較；這些屬於整理者提出的延伸方案。</p>
+
+<div class="panel point"><span class="label">ポイント</span><br>這篇不是「WordNet 上位詞或下位詞一定能解決詞義消歧」，而是初步檢查這些知識在什麼詞上可能提供辨別線索。結論的適用範圍是「部分詞」，不是整體 WSD 的普遍提升。</div>
+</section>
+
+<section id="compare"><h2>三篇研究的對照與整體理解</h2>
+<table><thead><tr><th>研究</th><th>主要問題</th><th>核心做法</th><th>結論邊界</th></tr></thead><tbody><tr><td>歷時語義變化</td><td>不同年代的用法比例有沒有改變？</td><td>上下文詞向量分組，再比較跨時期比例。</td><td>詞典覆蓋與聚類品質會左右變化判定。</td></tr><tr><td>詞向量分散</td><td>向量散布程度能否作為多義程度？</td><td>比較多義詞與單義詞的向量分散值。</td><td>總分散度無法單獨、可靠地表示詞義廣度。</td></tr><tr><td>無監督 WSD 特徵</td><td>外部語義關係能否補足無監督方法的訊號？</td><td>比較目標詞與 WordNet 上下位詞的 BERT 表徵相似度。</td><td>可能只對部分詞有用，尚需完整準確率驗證。</td></tr></tbody></table>
+<div class="panel"><span class="label">讀完後可帶走的三個判斷</span><ol><li>BERT 詞向量是上下文表示，不應直接等同於詞典詞義。</li><li>詞向量差異需要額外解釋與驗證；分群或分散值本身都不是語義結論。</li><li>外部詞典知識能提供語義錨點，但其覆蓋範圍、標籤粒度與語言適配程度會限制效果。</li></ol></div>
+</section>
+
+<section id="terms"><h2>術語小辭典</h2><dl class="glossary">
+<dt>上下文詞向量（contextual embedding）</dt><dd>同一詞在不同句子中可得到不同向量，因為表示會受到句內語境影響。</dd>
+<dt>歷時語義變化（diachronic semantic change）</dt><dd>詞語的意義或使用方式隨時間改變。</dd>
+<dt>詞義消歧（WSD）</dt><dd>判斷多義詞在特定句子中使用的是哪一個意思。</dd>
+<dt>監督式／無監督式學習</dt><dd>監督式方法使用帶有正確標籤的訓練例句；無監督式方法不依賴這類人工標籤，通常從資料結構中找規律。</dd>
+<dt>k-means 聚類</dt><dd>把向量分成指定數量的群，使每個向量歸到距離較近的群中心。</dd>
+<dt>輪廓分數（silhouette score）</dt><dd>衡量群集內部是否緊密、群集彼此是否分開的指標，可用來比較不同群數的分群結果。</dd>
+<dt>Jensen–Shannon divergence（JSD）</dt><dd>比較兩個機率分布差異的量。本文用它衡量相鄰時期的群集比例變化；分數變大不必然代表語義變化已被正確辨識。</dd>
+<dt>WordNet 上位詞／下位詞</dt><dd>上位詞是較一般、涵蓋範圍較廣的概念；下位詞是較具體、屬於其下的概念。例如「水果」可作為「蘋果」的上位概念。</dd>
+</dl></section>
+
+<section class="foot"><h3>資料與整理原則</h3><p>本講義依據以下三份附件整理：小林千真等人，2023，《BERT を用いた日本語の意味変化の分析》；歐陽恵子等人，2020，《BERT による単語埋め込み表現の分散値を用いた語義の広がりの分析》；田渕知明、大沢英一，2022，《教師なし学習による語義曖昧性解消の素性検討》。原文摘錄保留日文短句並附 PDF 頁碼。研究問題、部分延伸建議，以及跨篇比較均標為整理者歸納或分析。已依先前指示排除 2021 年會議短文與 2013 年 WordNet 動詞研究。</p><p>版面參考「115-1 日語文法專題討論」講讀頁的編排方式：摘要導讀、目次、編號章節、頁碼定位、重點框與術語整理。內容為本講義獨立改寫，並非網站原文。</p></section>
+</main></body></html>
+
